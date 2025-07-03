@@ -1,23 +1,22 @@
-# GitHub Action that fires on pull_request_target
-name: PR Review
+name: AI Code Review
+
 on:
-  pull_request_target:
+  pull_request_target:            # safe trigger for forks :contentReference[oaicite:0]{index=0}
     types: [opened, synchronize, reopened]
+
+permissions:                      # let GITHUB_TOKEN write PR comments
+  pull-requests: write            # or supply GH_TOKEN as a secret
+
 jobs:
   review:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-      - name: Run Review Bot
+      # If you want to run Ollama in the runner, uncomment the next two lines
+      # - uses: ollama/ollama-action@v1
+      # - run: echo "Ollama ready"
+      - run: pip install -r requirements.txt
+      - run: python -m crewai_app.main ${{ github.event.number }}
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
-        run: |
-          python -m crewai_app.main
+          OLLAMA_BASE_URL: http://localhost:11434     # or your remote host
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}           # omit if using default

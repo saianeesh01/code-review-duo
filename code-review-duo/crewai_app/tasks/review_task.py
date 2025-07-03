@@ -1,4 +1,10 @@
-# Review task prompt template and CrewAI Task object
-REVIEW_PROMPT = """
-You are a code review agent. Review the following code for issues, improvements, and best practices.
-"""
+from crewai import Task
+from ..agents.reviewer import reviewer
+
+review_task = Task(
+    agent=reviewer,
+    prompt_template=(
+        "You are given a pull-request diff:\n{diff}\n\n"
+        "Analyse and respond with an array of ReviewComment JSON objects."
+    ),
+)

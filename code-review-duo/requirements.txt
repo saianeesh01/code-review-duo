@@ -1,2 +1,6 @@
-pydantic
-flask
+crewai>=0.11
+litellm[ollama]>=2.0
+tree_sitter>=0.22
+chromadb>=0.5
+PyGithub>=2.2
+pydantic>=2.6

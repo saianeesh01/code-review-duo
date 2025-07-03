@@ -1,12 +1,17 @@
-# Pydantic schemas for strict JSON
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field
+from typing import Literal, List
 
 class ReviewComment(BaseModel):
     file: str
     line: int
-    comment: str
+    severity: Literal["INFO", "SUGGESTION", "WARNING", "ERROR"]
+    message: str = Field(..., max_length=400)
 
 class DiffPatch(BaseModel):
-    file: str
-    diff: str
+    diff: str                       # unified-diff
+    applies_cleanly: bool
+    # optional: list[ReviewComment] inline references
+
+class ReviewBundle(BaseModel):
+    comments: List[ReviewComment]
+    patch: DiffPatch
