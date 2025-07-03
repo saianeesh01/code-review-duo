@@ -1,0 +1,23 @@
+# GitHub Action that fires on pull_request_target
+name: PR Review
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Run Review Bot
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+        run: |
+          python -m crewai_app.main
